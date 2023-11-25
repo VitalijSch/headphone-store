@@ -1,65 +1,72 @@
 import React, { useEffect, useState } from "react";
+import Axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "../styles/styles.css"
-import Axios from "axios";
-import Header from "./Header";
-import LogIn from "./LogIn";
-import Carousel from "./Carousel";
-import ProductCard from "./ProductCard";
-import ShoppingCart from "./ShoppingCart";
+import "../styles/styles.css";
+import Header from "./header/Header";
+import LogIn from "./logIn/LogIn";
+import Shop from "./shop/Shop";
+import ShoppingCart from "./shoppingCart/ShoppingCart";
 
 function App() {
+    // State-Hooks für verschiedene Teile der App
     const [article, setArticle] = useState([]);
-    const [addToShoppingCart, setAddToShoppingCart] = useState([]);
-
+    const [shoppingCart, setShoppingCart] = useState([]);
     const [showLogIn, setShowLogIn] = useState(false);
     const [showShop, setShowShop] = useState(false);
     const [showShoppingCart, setShowShoppingCart] = useState(false);
     const [showIcons, setShowIcons] = useState(false);
 
+    // Daten von der Datenbank abrufen und View initialisieren
     useEffect(() => {
-        viewChange(true, false, false, false);
-    }, []);
-
-    useEffect(() => {
-        const article = async () => {
+        const fetchData = async () => {
             try {
                 const response = await Axios.get("http://localhost:3001/article");
                 setArticle(response.data);
             } catch (error) {
-                console.error("Error fetching customer data:", error);
+                console.error("Error fetching article data:", error);
             }
         };
-        article();
-    }, [article]);
 
-    const viewChange = (showLogIn, showShop, showShoppingCart, showIcons) => {
+        fetchData();
+        setView(true, false, false, false);
+    }, []);
+
+    // Funktion, um den View-Zustand zu setzen
+    const setView = (showLogIn, showShop, showShoppingCart, showIcons) => {
         setShowLogIn(showLogIn);
         setShowShop(showShop);
         setShowShoppingCart(showShoppingCart);
         setShowIcons(showIcons);
     }
 
-    const articleAddShoppingCart = (id, title, price) => {
-        const existingProductIndex = addToShoppingCart.findIndex(product => product.id === id);
+    // Event-Handler für verschiedene Ansichten
+    const handleLogIn = () => setView(true, false, false, false);
+    const handleShop = () => setView(false, true, false, true);
+    const handleShoppingCart = () => setView(false, false, true, true);
+    const handleLogOut = () => setView(true, false, false, false);
+
+    // Funktion zum Hinzufügen von Artikeln zum Warenkorb
+    const addToShoppingCart = (id, title, price, amount) => {
+        const existingProductIndex = shoppingCart.findIndex(product => product.id === id);
 
         if (existingProductIndex !== -1) {
-            const updatedCart = addToShoppingCart.map((product, index) => {
+            // Produkt existiert bereits im Warenkorb, aktualisiere die Menge
+            const updatedCart = shoppingCart.map((product, index) => {
                 if (index === existingProductIndex) {
-                    const newAmount = product.amount + 1;
                     return {
                         ...product,
                         id,
-                        amount: newAmount,
+                        amount,
                         price,
-                        totalPrice: newAmount * price,
+                        totalPrice: amount * price,
                     }
                 }
                 return product;
             })
-            setAddToShoppingCart(updatedCart)
+            setShoppingCart(updatedCart)
         } else {
+            // Produkt ist neu im Warenkorb
             const newProduct = {
                 id,
                 amount: 1,
@@ -67,80 +74,58 @@ function App() {
                 price,
                 totalPrice: price,
             }
-            setAddToShoppingCart(prevProducts => [...prevProducts, newProduct]);
+            setShoppingCart(prevProducts => [...prevProducts, newProduct]);
         }
+    }
+
+    // Funktion zum Löschen von Artikeln aus dem Warenkorb
+    function articleDeleteFromShoppingCart(product) {
+        const updatedCart = shoppingCart.filter(article => article.id !== product);
+        setShoppingCart(updatedCart);
     }
 
     return (
         <div className="vh-100">
+            {/* Header-Komponente mit Event-Handlern und Icons */}
             <Header
-                logIn={() => { viewChange(true, false, false, false) }}
-                shop={() => { viewChange(false, true, false, true) }}
-                shoppingCart={() => { viewChange(false, false, true, true) }}
-                logOut={() => { viewChange(true, false, false, false) }}
+                logIn={handleLogIn}
+                shop={handleShop}
+                shoppingCart={handleShoppingCart}
+                logOut={handleLogOut}
                 showIcons={showIcons}
             />
+
+            {/* Anzeige des Warenkorbs, wenn showShoppingCart true ist */}
             {showShoppingCart &&
-                <div className="container">
-                    <h2 className="mt-5 mb-3">Warenkorb</h2>
-                    <div className="table-responsive small">
-                        <table className="table table-striped table-sm">
-                            <thead>
-                                <tr className="text-center">
-                                    <th>Menge</th>
-                                    <th>Artikel</th>
-                                    <th>Preis</th>
-                                    <th>Gesamtpreis</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {addToShoppingCart.map(product => (
-                                    <ShoppingCart
-                                        key={product.id}
-                                        amount={product.amount}
-                                        title={product.title}
-                                        price={product.price}
-                                        totalPrice={product.totalPrice}
-                                    />
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            }
+                <ShoppingCart
+                    onAdd={addToShoppingCart}
+                    onDelete={articleDeleteFromShoppingCart}
+                    shoppingCart={shoppingCart}
+                />}
+
+            {/* Anzeige des Shops, wenn showShop true ist */}
             {showShop &&
-                <>
-                    < Carousel />
-                    <div className="container">
-                        <div className="row g-4 d-flex justify-content-center">
-                            {article.map(product => (
-                                <ProductCard
-                                    key={product.item_id}
-                                    id={product.item_id}
-                                    title={product.title}
-                                    text={product.text}
-                                    imgData={product.img_data}
-                                    currentPrice={product.current_price}
-                                    oldPrice={product.old_price}
-                                    onAdd={articleAddShoppingCart}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </>
-            }
-            {showLogIn &&
-                <LogIn
-                    logIn={() => { viewChange(false, true, false, true) }}
+                <Shop
+                    onAdd={addToShoppingCart}
+                    article={article}
                 />
             }
+
+            {/* Anzeige des Login-Fensters, wenn showLogIn true ist */}
+            {showLogIn &&
+                <LogIn
+                    shop={handleShop}
+                />
+            }
+
+            {/* Scroll-to-Top-Icon */}
             <img
                 className="scroll-to-top backToTopImg cursorPointer"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 src="./images/backToTop.svg"
                 alt="back to top icon"
             />
-        </div >
+        </div>
     )
 }
 
