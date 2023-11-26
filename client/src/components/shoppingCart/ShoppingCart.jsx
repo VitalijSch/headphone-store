@@ -7,7 +7,7 @@ function ShoppingCart({ shoppingCart, onAdd, onDelete }) {
         accumulator + parseInt(currentProduct.totalPrice), 0);
 
     return (
-        <div className="container">
+        <div className="container fixedShoppingCartContent">
             <h2 className="mt-5 mb-3">Warenkorb</h2>
             <span className="fs-5 text-muted">Gesamtpreis: {`${total} €`}</span>
             <div className="table-responsive small">

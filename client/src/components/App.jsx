@@ -41,7 +41,6 @@ function App() {
     }
 
     // Event-Handler für verschiedene Ansichten
-    const handleLogIn = () => setView(true, false, false, false);
     const handleShop = () => setView(false, true, false, true);
     const handleShoppingCart = () => setView(false, false, true, true);
     const handleLogOut = () => setView(true, false, false, false);
@@ -88,7 +87,6 @@ function App() {
         <div className="vh-100">
             {/* Header-Komponente mit Event-Handlern und Icons */}
             <Header
-                logIn={handleLogIn}
                 shop={handleShop}
                 shoppingCart={handleShoppingCart}
                 logOut={handleLogOut}
@@ -117,14 +115,6 @@ function App() {
                     shop={handleShop}
                 />
             }
-
-            {/* Scroll-to-Top-Icon */}
-            <img
-                className="scroll-to-top backToTopImg cursorPointer"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                src="./images/backToTop.svg"
-                alt="back to top icon"
-            />
         </div>
     )
 }
