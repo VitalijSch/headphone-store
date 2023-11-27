@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CartInput from "./CartInput";
 
 function ShoppingCart({ shoppingCart, onAdd, onDelete }) {
@@ -6,8 +6,13 @@ function ShoppingCart({ shoppingCart, onAdd, onDelete }) {
     const total = shoppingCart.reduce((accumulator, currentProduct) =>
         accumulator + parseInt(currentProduct.totalPrice), 0);
 
+    // Setze die Scrollposition auf die Oberseite, wenn die Komponente montiert wird
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
-        <div className="container">
+        <div className="container fixedShoppingCartContent">
             <h2 className="mt-5 mb-3">Warenkorb</h2>
             <span className="fs-5 text-muted">Gesamtpreis: {`${total} €`}</span>
             <div className="table-responsive small">

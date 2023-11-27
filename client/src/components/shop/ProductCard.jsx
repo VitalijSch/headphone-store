@@ -20,7 +20,7 @@ function ProductCard({ id, title, text, imageNumber, currentPrice, oldPrice, onA
     };
 
     return (
-        <div className="col-11 col-md-6 col-lg-4">
+        <div className="col-10 col-sm-8 col-md-6 col-lg-4">
             <div className="card p-0 h-100">
                 <img
                     src={`/images/headphone${imageNumber}.jpg`}
