@@ -1,14 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 
-const SearchBar = () => {
+const SearchBar = ({ article, setFilteredArray }) => {
     const [search, setSearch] = useState("");
+
+    const filteredArticle = useCallback(() => {
+        return article.filter(article => {
+            return search.toLowerCase() === "" ? article : article.title.toLowerCase().includes(search);
+        });
+    }, [article, search]);
+
+    useEffect(() => {
+        setFilteredArray(filteredArticle());
+    }, [search, setFilteredArray, filteredArticle]);
 
     return (
         <div className="col-lg-3 offset-lg-0 col-md-6 d-flex align-items-center">
             <div className="input-group">
                 <input
                     onChange={e => { setSearch(e.target.value) }}
-                    value={search}
                     name="search"
                     type="text"
                     className="form-control"
@@ -16,12 +25,6 @@ const SearchBar = () => {
                     aria-label="Search"
                     aria-describedby="button-addon"
                 />
-                <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    id="button-addon">
-                    Suchen
-                </button>
             </div>
         </div>
     )

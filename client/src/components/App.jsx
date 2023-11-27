@@ -11,6 +11,7 @@ import ShoppingCart from "./shoppingCart/ShoppingCart";
 function App() {
     // State-Hooks für verschiedene Teile der App
     const [article, setArticle] = useState([]);
+    const [filteredArray, setFilteredArray] = useState([]);
     const [shoppingCart, setShoppingCart] = useState([]);
     const [showLogIn, setShowLogIn] = useState(false);
     const [showShop, setShowShop] = useState(false);
@@ -91,6 +92,8 @@ function App() {
                 shoppingCart={handleShoppingCart}
                 logOut={handleLogOut}
                 showIcons={showIcons}
+                article={article}
+                setFilteredArray={setFilteredArray}
             />
 
             {/* Anzeige des Warenkorbs, wenn showShoppingCart true ist */}
@@ -105,7 +108,7 @@ function App() {
             {showShop &&
                 <Shop
                     onAdd={addToShoppingCart}
-                    article={article}
+                    filteredArray={filteredArray.length === 0 || filteredArray === "" ? article : filteredArray}
                 />
             }
 
