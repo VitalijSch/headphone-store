@@ -1,23 +1,25 @@
 import React, { useEffect, useState, useCallback } from 'react'
 
-const SearchBar = ({ article, setFilteredArray }) => {
+const SearchBar = ({ article, setSearchArticle }) => {
     const [search, setSearch] = useState("");
 
+    // Memoisierte Filterfunktion für Artikel basierend auf dem Suchtext
     const filteredArticle = useCallback(() => {
         return article.filter(article => {
             return search.toLowerCase() === "" ? article : article.title.toLowerCase().includes(search);
         });
     }, [article, search]);
 
+    // Suche aktualisieren, wenn der Suchtext geändert wird
     useEffect(() => {
-        setFilteredArray(filteredArticle());
-    }, [search, setFilteredArray, filteredArticle]);
+        setSearchArticle(filteredArticle());
+    }, [search, setSearchArticle, filteredArticle]);
 
     return (
         <div className="col-lg-3 offset-lg-0 col-md-6 d-flex align-items-center">
             <div className="input-group">
                 <input
-                    onChange={e => { setSearch(e.target.value) }}
+                    onChange={e => setSearch(e.target.value)}
                     name="search"
                     type="text"
                     className="form-control"

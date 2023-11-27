@@ -2,13 +2,13 @@ import React from "react";
 import Carousel from "./Carousel"
 import ProductCard from "./ProductCard";
 
-function Shop({ filteredArray, onAdd }) {
+function Shop({ searchArticle, onAdd }) {
     return (
         <>
             < Carousel />
-            <div className="container">
+            <div className="mx-3">
                 <div className="row g-4 d-flex justify-content-center">
-                    {filteredArray.map(product => (
+                    {searchArticle.map(product => (
                         <ProductCard
                             key={product.item_id}
                             id={product.item_id}

@@ -2,7 +2,7 @@ import React from "react";
 import SearchBar from "./SearchBar";
 
 
-function Header({ article, setFilteredArray, shop, shoppingCart, logOut, showIcons }) {
+function Header({ article, setSearchArticle, shop, shoppingCart, logOut, showIcons }) {
     return (
         <div className="border-bottom shadow px-4 mb-3 fixed-top bg-white">
             <div className="row p-2">
@@ -12,7 +12,7 @@ function Header({ article, setFilteredArray, shop, shoppingCart, logOut, showIco
                 </div>
                 {showIcons && (
                     <>
-                        <SearchBar article={article} setFilteredArray={setFilteredArray} />
+                        <SearchBar article={article} setSearchArticle={setSearchArticle} />
                         <div className="col-lg-3 offset-lg-1 col-md-4 offset-md-2 col-sm-5 col-7 p-3 d-flex algin-items-center justify-content-between">
                             <button onClick={shop} className="btn btn-warning mb-0">
                                 <img

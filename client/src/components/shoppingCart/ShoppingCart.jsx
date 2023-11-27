@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CartInput from "./CartInput";
 
 function ShoppingCart({ shoppingCart, onAdd, onDelete }) {
     // Berechnung des Gesamtpreises
     const total = shoppingCart.reduce((accumulator, currentProduct) =>
         accumulator + parseInt(currentProduct.totalPrice), 0);
+
+    // Setze die Scrollposition auf die Oberseite, wenn die Komponente montiert wird
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <div className="container fixedShoppingCartContent">
